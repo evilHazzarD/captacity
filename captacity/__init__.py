@@ -129,6 +129,7 @@ def detect_local_whisper(print_info):
 def add_captions(
     video_file = None,
     
+    clips_to_add = [],
     video_clip = None,
     audio_file = None,
    
@@ -278,12 +279,13 @@ def add_captions(
     if print_info:
         print("Rendering video...")
 
-    video_with_text = CompositeVideoClip(clips)
+    video_with_text = CompositeVideoClip(clips_to_add, clips)
 
     video_with_text.write_videofile(
         filename=output_file,
         codec="libx264",
         fps=video.fps,
+        threads=os.cpu_count(),
         logger="bar" if print_info else None,
     )
 
