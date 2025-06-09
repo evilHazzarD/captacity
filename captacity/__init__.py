@@ -127,7 +127,11 @@ def detect_local_whisper(print_info):
     return use_local_whisper
 
 def add_captions(
-    video_file,
+    video_file = None,
+    
+    video_clip = None,
+    audio_file = None,
+   
     output_file = "with_transcript.mp4",
 
     font = "Bangers-Regular.ttf",
@@ -163,13 +167,16 @@ def add_captions(
     if print_info:
         print("Extracting audio...")
 
-    temp_audio_file = tempfile.NamedTemporaryFile(suffix=".wav").name
-    ffmpeg([
-        'ffmpeg',
-        '-y',
-        '-i', video_file,
-        temp_audio_file
-    ])
+    if audio_file is None:
+        temp_audio_file = tempfile.NamedTemporaryFile(suffix=".wav").name
+        ffmpeg([
+            'ffmpeg',
+            '-y',
+            '-i', video_file,
+            temp_audio_file
+        ])
+    else:
+        temp_audio_file = audio_file
 
     if segments is None:
         if print_info:
@@ -187,7 +194,7 @@ def add_captions(
         print("Generating video elements...")
 
     # Open the video file
-    video = VideoFileClip(video_file)
+    video = video_clip if video_clip else VideoFileClip(video_file)
     text_bbox_width = video.w-padding*2
     clips = [video]
 
